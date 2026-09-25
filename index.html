@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integers Quiz | Oral Administration</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;color:#17202a;margin:0} header{background:#17202a;color:#fff;padding:18px 24px}
+main{max-width:1200px;margin:auto;padding:16px} .controls,.card{background:#fff;border:1px solid #d5d8dc;border-radius:14px;padding:14px;margin-bottom:14px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center} button,select{font:inherit;padding:10px;border:1px solid #aeb6bf;border-radius:8px;background:#fff}
+.primary{background:#17202a;color:#fff} .grid{display:grid;grid-template-columns:1.3fr .7fr;gap:14px} iframe{width:100%;height:72vh;border:0}
+#text{white-space:pre-wrap;font-size:20px;line-height:1.55} .muted{color:#657786} @media(max-width:800px){.grid{grid-template-columns:1fr}iframe{height:55vh}}
+</style></head><body>
+<header><h1 style="margin:0">Integers Quiz</h1><div>Oral Administration</div></header>
+<main>
+<div class="controls">
+<label>Question <select id="pick"></select></label>
+<label>Speed <select id="rate"><option value=".75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></label>
+<button class="primary" id="read">🔊 Read Question</button><button id="pause">⏯ Pause / Resume</button><button id="repeat">↻ Repeat</button><button id="stop">■ Stop</button>
+<button id="prev">← Previous</button><button id="next">Next →</button>
+</div>
+<div class="grid">
+<div class="card"><iframe src="integers-quiz.pdf#toolbar=1&navpanes=0"></iframe></div>
+<div class="card"><h2 id="label"></h2><div id="text"></div><p class="muted">The reader only reads the assessment. It does not explain or solve questions.</p></div>
+</div></main>
+<script>
+const Q=[{"n": "1", "text": "-2 + -5 = ____________"}, {"n": "2", "text": "-6(-7) = ____________"}, {"n": "3", "text": "48 - (-31) = ___________"}, {"n": "4", "text": "(-29) - 29 = ____________"}, {"n": "5", "text": "10/-5 =__________"}, {"n": "6", "text": "13 + (-29) = __________"}, {"n": "7", "text": "(-32) - 44 = __________"}, {"n": "8", "text": "-124/-4 =____________"}, {"n": "9", "text": "-122 x 24 = ___________"}, {"n": "10", "text": "-493 + 23 - 24 = __________"}, {"n": "11", "text": "What is the rule for adding integers with different (unlike) signs?\nA) Add the absolute values and keep the common sign.\nB) Subtract the smaller absolute value from the larger absolute value and keep the sign of the integer with the larger absolute value.\nC) Subtract the smaller absolute value from the larger absolute value and keep the sign of the smaller number.\nD) Always make the final answer negative."}, {"n": "12", "text": "Place these steps in order on subtracting integers.\na. Change the subtraction sign to an addition sign\nb. Follow the rules for adding integers\nc. Change the sign of the second number to its opposite\nd. Keep the first number"}, {"n": "13", "text": "When multiplying a positive and negative number my product will be positive every time.\na. True\nb. False"}, {"n": "14", "text": "When multiplying a negative number by a negative number my product will be negative.\na. True\nb. False"}, {"n": "15", "text": "Frank swam 12 feet below sea level, then he swam to 18 feet below sea level. What is the total distance that Frank swam below sea level?"}, {"n": "16", "text": "Karlie and Jariah were doing the math problem below. Karlie said that the answer will be positive at the end. Jariah said it will be negative at the end. Who is right and Why?\n-4 x -5 + -21 = __________"}, {"n": "17", "text": "Isaiah deposited $25.50 into a new bank account. Then he withdrew 2 times that amount. How much money is showing in the bank account?"}, {"n": "18", "text": "If Patrick lost $12.25 at an Iron Maiden concert, then the next day he found $25.37 at a Justin Bieber concert, then he spent $3.25 at the concession stand. How much money does Patrick have now?"}, {"n": "19", "text": "Elijah rushed 48 yards in his first game, in his second game he rushed -27 yards and in his third game he rushed -25 yards. Killian rushed 4 times Elijah's all time rushing yards. How much did Killian rush?"}, {"n": "20", "text": "If Mr. Lindsey is in a submarine and it is hovering at an elevation of -150 feet relative to sea level. Then it dives 3 times its depth. Then drops another 50 feet because Mr. Lindsey is scared of sharks. Finally the submarine ascends to a safety checkpoint located at ½ its current depth. What is the submarine’s final elevation?"}, {"n": "21", "text": "Bonus (-1/3 + -12) - (14 x -1/2) ___________"}]; let i=0,last="";
+const $=x=>document.getElementById(x);
+function spoken(t){
+ return t.replace(/½/g,"one half").replace(/(-?\d+)\s*\/\s*(-?\d+)/g,(m,a,b)=>a+" divided by "+b)
+ .replace(/(-?\d+)\s*[x×]\s*(-?\d+)/gi,(m,a,b)=>a+" times "+b)
+ .replace(/-([0-9]+(?:\.[0-9]+)?)/g,"negative $1").replace(/\+/g," plus ")
+ .replace(/\s-\s/g," minus ").replace(/=/g," equals ").replace(/_{2,}/g," blank ");
+}
+function show(){let q=Q[i];$("pick").value=i;$("label").textContent="Question "+q.n;$("text").textContent=q.text}
+function speak(){speechSynthesis.cancel();let q=Q[i];last="Question "+q.n+". "+spoken(q.text);let u=new SpeechSynthesisUtterance(last);u.rate=+$("rate").value;speechSynthesis.speak(u)}
+Q.forEach((q,j)=>{let o=document.createElement("option");o.value=j;o.textContent="Question "+q.n;$("pick").appendChild(o)});
+$("pick").onchange=()=>{i=+$("pick").value;show()};$("read").onclick=speak;
+$("repeat").onclick=()=>{if(last){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(last);u.rate=+$("rate").value;speechSynthesis.speak(u)}else speak()};
+$("pause").onclick=()=>speechSynthesis.paused?speechSynthesis.resume():speechSynthesis.pause();$("stop").onclick=()=>speechSynthesis.cancel();
+$("prev").onclick=()=>{if(i>0){i--;show()}};$("next").onclick=()=>{if(i<Q.length-1){i++;show()}};show();
+</script></body></html>
